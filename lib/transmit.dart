@@ -4,20 +4,25 @@ import 'dart:html';
 import 'dart:js';
 
 /// fire a message and trigger activated services.
-transmit(String type, var content) {
-  var event = new CustomEvent('PUMP_' + type, detail: content);
+transmit(var channel, [var content]) {
+  if (!(channel is String) && !(channel is int)) throw('channel must be a String or and int');
+  var event = new CustomEvent('PUMP_' + channel, detail: content);
   document.dispatchEvent(event);
 }
 
-// for your dart:js callbacks
+/// A [JsFunction] that calls 'transmit'.
+/// Can be used as a JS callback in dart-wrapped JS libraries.
 JsFunction get jsTransmit => context['transmit'];
 
 /// A [Service] reacts to every message transmitted of type in [types]
 class Service {
-  Service(List<String> types, Function target) {
-    for (String type in types) {
-      document.addEventListener('PUMP_' + type,
-          (CustomEvent event) => target(event.detail));
+  Function callback;
+
+  Service(final List channels, this.callback) {
+    for (var channel in channels) {
+      if (!(channel is String) && !(channel is int)) throw('channel must be a String or and int');
+      document.addEventListener('PUMP_' + channel.toString(),
+          (CustomEvent event) => callback(event.detail));
     }
   }
 }
