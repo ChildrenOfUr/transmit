@@ -39,7 +39,7 @@ class Service {
 				throw('channel must be a String or and int');
 			}
 			document.addEventListener('PUMP_' + channel.toString(),
-				                          (CustomEvent event) => callback(event.detail));
+				                          (Event event) => callback((event as CustomEvent).detail));
 		}
 	}
 }
