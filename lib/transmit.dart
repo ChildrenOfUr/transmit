@@ -38,8 +38,9 @@ class Service {
 			if (!(channel is String) && !(channel is int)) {
 				throw('channel must be a String or and int');
 			}
-			document.addEventListener('PUMP_' + channel.toString(),
-				                          (CustomEvent event) => callback(event.detail));
+			document.on['PUMP_${channel.toString()}'].listen((Event event) {
+				callback((event as CustomEvent).detail);
+			});
 		}
 	}
 }
